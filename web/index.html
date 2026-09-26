@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WorkTrack RFID</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div id="login-screen" class="login-screen">
+    <form id="login-form" class="login-card">
+      <h1>WorkTrack RFID</h1>
+      <p class="subtitle">Sign in to continue</p>
+      <label>Username
+        <input type="text" id="login-username" autocomplete="username" required />
+      </label>
+      <label>Password
+        <input type="password" id="login-password" autocomplete="current-password" required />
+      </label>
+      <button type="submit">Sign in</button>
+      <p id="login-error" class="error" hidden></p>
+    </form>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <header class="topbar">
+      <div class="brand">WorkTrack RFID</div>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="tab-btn" data-tab="employees">Employees</button>
+        <button class="tab-btn" data-tab="projects">Projects</button>
+        <button class="tab-btn" data-tab="attendance">Attendance</button>
+        <button class="tab-btn" data-tab="timelogs">Time Logs</button>
+        <button class="tab-btn" data-tab="exceptions">Exceptions</button>
+        <button class="tab-btn" data-tab="simulate">Simulate Scan</button>
+      </nav>
+      <div class="user-box">
+        <span id="whoami"></span>
+        <button id="logout-btn" class="secondary">Log out</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="tab-dashboard" class="tab-panel active">
+        <h2>Management overview</h2>
+        <div id="mgmt-cards" class="card-grid"></div>
+
+        <h2>Live workforce</h2>
+        <div class="table-wrap">
+          <table id="live-table">
+            <thead>
+              <tr><th>Employee</th><th>Status</th><th>Project</th><th>Started</th><th>Duration (min)</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-employees" class="tab-panel">
+        <h2>Employees</h2>
+        <form id="employee-form" class="inline-form">
+          <input type="text" id="emp-code" placeholder="Employee code (e.g. EMP002)" required />
+          <input type="text" id="emp-name" placeholder="Full name" required />
+          <select id="emp-department" required></select>
+          <input type="text" id="emp-designation" placeholder="Designation" required />
+          <button type="submit">Add employee</button>
+        </form>
+        <details class="inline-form-alt">
+          <summary>Need a new department?</summary>
+          <form id="department-form" class="inline-form">
+            <input type="text" id="dept-name" placeholder="Department name" required />
+            <button type="submit">Add department</button>
+          </form>
+        </details>
+        <div class="table-wrap">
+          <table id="employees-table">
+            <thead>
+              <tr><th>Code</th><th>Name</th><th>Department</th><th>Designation</th><th>Status</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-projects" class="tab-panel">
+        <h2>Projects</h2>
+        <form id="project-form" class="inline-form">
+          <input type="text" id="proj-code" placeholder="Project code (e.g. PRJ-002)" required />
+          <input type="text" id="proj-name" placeholder="Project name" required />
+          <input type="text" id="proj-customer" placeholder="Customer" />
+          <input type="number" id="proj-planned-hours" placeholder="Planned hours" min="0" step="0.5" />
+          <button type="submit">Add project</button>
+        </form>
+        <div class="table-wrap">
+          <table id="projects-table">
+            <thead>
+              <tr><th>Code</th><th>Name</th><th>Customer</th><th>Status</th><th>Planned hrs</th><th>Actual hrs</th><th>Remaining hrs</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-attendance" class="tab-panel">
+        <h2>Attendance</h2>
+        <form id="attendance-filter" class="inline-form">
+          <input type="number" id="att-employee-id" placeholder="Employee ID (optional)" min="1" />
+          <input type="date" id="att-date" />
+          <button type="submit">Filter</button>
+        </form>
+        <div class="table-wrap">
+          <table id="attendance-table">
+            <thead>
+              <tr><th>Employee ID</th><th>Date</th><th>First entry</th><th>Last exit</th><th>Gross (h)</th><th>Break (h)</th><th>Net (h)</th><th>Overtime (h)</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-timelogs" class="tab-panel">
+        <h2>Time logs</h2>
+        <form id="timelogs-filter" class="inline-form">
+          <input type="number" id="tl-employee-id" placeholder="Employee ID (optional)" min="1" />
+          <input type="number" id="tl-project-id" placeholder="Project ID (optional)" min="1" />
+          <button type="submit">Filter</button>
+        </form>
+        <div class="table-wrap">
+          <table id="timelogs-table">
+            <thead>
+              <tr><th>Employee ID</th><th>Project ID</th><th>Activity ID</th><th>Start</th><th>End</th><th>Duration (min)</th><th>Break?</th><th>Status</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-exceptions" class="tab-panel">
+        <h2>Exceptions</h2>
+        <div class="table-wrap">
+          <table id="exceptions-table">
+            <thead>
+              <tr><th>Type</th><th>Employee ID</th><th>Description</th><th>Severity</th><th>Status</th><th>Created</th><th>Action</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="tab-simulate" class="tab-panel">
+        <h2>Simulate an RFID scan</h2>
+        <p class="hint">
+          Sends a scan straight to the API's HTTP fallback ingestion endpoint (no MQTT broker
+          needed) &mdash; the same event-processing pipeline a real gateway would trigger.
+        </p>
+        <form id="simulate-form" class="inline-form">
+          <select id="sim-reader" required></select>
+          <input type="text" id="sim-card" placeholder="Card UID" value="CARD-DEMO-001" required />
+          <button type="submit">Send scan</button>
+        </form>
+        <pre id="simulate-result" class="result-box"></pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
