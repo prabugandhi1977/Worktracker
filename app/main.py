@@ -2,6 +2,7 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 import app.models  # noqa: F401  (registers all models on Base before create_all)
 from app.database import Base, engine
@@ -47,3 +48,5 @@ app.include_router(devices.router)
 app.include_router(events.router)
 app.include_router(tracking.router)
 app.include_router(dashboard.router)
+
+app.mount("/", StaticFiles(directory="web", html=True), name="web")

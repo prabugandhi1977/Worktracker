@@ -111,6 +111,27 @@ never at `rfid_events` or other operational tables:
 docker compose exec -T postgres psql -U worktrack -d worktrack < sql/reporting_views.sql
 ```
 
+## Deployment
+
+This repo deploys to [Render](https://render.com) via `render.yaml` (a
+Blueprint): connect the GitHub repo in the Render dashboard ("New +" →
+"Blueprint"), and it provisions a free Postgres database plus a web service
+that builds from the `Dockerfile`, wired together automatically. Every push
+to `master` redeploys.
+
+The FastAPI app serves the `web/` dashboard itself (same origin, no separate
+static site needed), so the whole stack is one Render service + one
+database. Mosquitto/MQTT isn't deployed there — `MQTT_HOST` is left unset in
+`render.yaml`, so the app skips it and only the `/events/rfid` HTTP fallback
+is available for ingesting events. Run the full stack (including MQTT) with
+Docker Compose locally, or on your own server, if real gateway hardware
+needs to publish over MQTT.
+
+Render's free plan spins the service down after periods of inactivity (the
+next request wakes it up after a short delay), and the free Postgres
+instance expires after a fixed period per Render's policy — fine for a demo,
+not for production traffic.
+
 ## What's deliberately out of scope for this MVP
 
 Matches PRD section 5 (Non-Goals) and section 23 (Post-MVP): payroll,
